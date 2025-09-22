@@ -20,7 +20,9 @@ abstract contract CodeConstants {
     int256 public constant MOCK_WEI_PER_UNIT_LINK = 2e15; // 1 LINK 
 }
 /**
- * Helper to return different configuration for different blockchains
+ * @title HelperConfig
+ * @author Gabriel Eguiguren P.
+ * @dev Helper to return different configuration for different blockchains
  */
 contract HelperConfig is CodeConstants, Script {
 
@@ -90,6 +92,10 @@ contract HelperConfig is CodeConstants, Script {
         return localNetworkConfig;
     }
 
+    /**
+     * @dev all values are obtained from Chainlink and Sepolia testnet
+     * @notice This function returns the NetworkConfig for Sepolia testnet. 
+     */
     function getSepoliaNetworkConfig() public pure returns (NetworkConfig memory) {
         
         return NetworkConfig({
@@ -98,7 +104,7 @@ contract HelperConfig is CodeConstants, Script {
             // https://docs.chain.link/vrf/v2-5/supported-networks
             vrfCoordinator: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B, 
             keyHashGasAddress: 0x9e1344a1247c8a1785d0a4681a27152bffdb43666ae5bf7d14d24a5efd44bf71,
-            // https://vrf.chain.link/#/side-drawer/subscription/sepolia/114106273471514191118470810364804629509721860383853023365763283285247998828867
+            //https://vrf.chain.link/#/side-drawer/subscription/sepolia/114106273471514191118470810364804629509721860383853023365763283285247998828867
             subscriptionId: 114106273471514191118470810364804629509721860383853023365763283285247998828867, 
             callbackGasLimit: 500000,
             linkERC20Address: 0x779877A7B0D9E8603169DdbD7836e478b4624789,

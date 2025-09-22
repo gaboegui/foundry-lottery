@@ -7,7 +7,7 @@ import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/V
 /**
  * @title Raffle.sol is a Simple Raffle Smart Contract
  * @author Gabriel Eguiguren P.
- * @notice This contract is for a decentralized raffle.
+ * @notice This contract is for a decentralized raffle who gives the winner the 100% of prizepool.
  * @dev Implements Chainlink VRFv2.5 to get a random winner.
  */
 contract Raffle is VRFConsumerBaseV2Plus {
@@ -42,6 +42,14 @@ contract Raffle is VRFConsumerBaseV2Plus {
     event WinnerPicked(address indexed winner);
     event RequestRaffleWinner(uint256 indexed requestId);
 
+    /**
+     * @param _entranceFee The amount of ETH to enter the raffle
+     * @param _intervalDuration The duration of the lottery in seconds
+     * @param _vrfCoordinator The address of the VRF Coordinator
+     * @param _keyHashGasAddress The gas lane to use for the VRF request
+     * @param _subscriptionId The subscription ID for the VRF request
+     * @param _callbackGasLimit The gas limit for the VRF callback
+     */
     constructor( uint256 _entranceFee, uint256 _intervalDuration,
         address _vrfCoordinator, bytes32 _keyHashGasAddress,
         uint256 _subscriptionId, uint32 _callbackGasLimit
@@ -57,6 +65,10 @@ contract Raffle is VRFConsumerBaseV2Plus {
         s_raffleState = RaffleState.OPEN;
     }
 
+    /**
+     * @notice Allows a player to enter the raffle
+     * @dev Reverts if the raffle is not open or if the player does not send enough ETH
+     */
     function enterRaffle() external payable {
         // require(msg.value >= i_entranceFee, Raffle_NotEnoughEth());  //^0.8.26
         if (msg.value < i_entranceFee) {
@@ -71,7 +83,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
         emit RafflePlayerEntered(msg.sender);
     }
 
-    // When should the winner be picked?
+
     /**
      * @dev This is the function that the Chainlink Automation nodes will call to see
      * if the lottery is ready to have a winner picked.
@@ -97,8 +109,13 @@ contract Raffle is VRFConsumerBaseV2Plus {
         return (upkeepNeeded, "");
     }
 
-    // Start the picking a Winner if conditions met, 
-    // This is the function that the Chainlink AUTOMATION nodes will call
+ 
+    /**
+     * @notice This function is called by the Chainlink Automation nodes to pick a winner.
+     * @dev It checks if upkeep is needed and then requests a random word from Chainlink VRF.
+     * param performData The data passed by the Chainlink Automation nodes.
+     * No explicit return value, but it triggers a Chainlink VRF request.
+     */
     function performUpkeep(bytes calldata /* performData */ ) external { // This function is called by the Chainlink Automation nodes
         // If enough time has passed pick a winner
         (bool upkeepNeeded,) = checkUpkeep("");
@@ -107,8 +124,8 @@ contract Raffle is VRFConsumerBaseV2Plus {
         }
 
         s_raffleState = RaffleState.CALCULATING_WINNER;
-        // 1. Select a random winner using Chainlink VRFv2.5
-        // 1.1 Request Chainlink to generate the random number
+        // Select a random winner using Chainlink VRFv2.5
+        // Request Chainlink to generate the random number
         VRFV2PlusClient.RandomWordsRequest memory request = VRFV2PlusClient.RandomWordsRequest({
             keyHash: i_keyHashGasAdd,
             subId: i_subscriptionId,
@@ -126,8 +143,14 @@ contract Raffle is VRFConsumerBaseV2Plus {
         emit RequestRaffleWinner(requestId);
     }
 
-    // defined as virtual in the abstract parent class
-    // must be implemented by the inheriting contract VRFConsumerBaseV2Plus
+    /**
+     * @notice This function is called by the VRF coordinator once it has a random number
+     * @dev This function picks a winner and sends them the money
+     * @dev defined as virtual in the abstract parent class
+     * @dev must be implemented by the inheriting contract VRFConsumerBaseV2Plus
+     * @param requestId The ID of the VRF request
+     * @param randomWords The random number returned by the VRF coordinator
+     */
     function fulfillRandomWords(uint256 requestId, uint256[] calldata randomWords) internal virtual override {
         // CEI Pattern for Smart Contracts: Check, Effect, Interact Prevents Reentrancy Attacks
         // 1. Checks
@@ -172,14 +195,23 @@ contract Raffle is VRFConsumerBaseV2Plus {
         return i_intervalDuration;
     }
 
-    function getPlayer(uint256 _index) external view returns (address) {
-        return s_players[_index];
-    }
-
     function getNumberOfPlayers() external view returns (uint256) {
         return s_players.length;
     }
 
+    /**
+     * @notice Returns the player at a given index
+     * @param _index The index of the player to return
+     * @return The player at the given index
+     */
+    function getPlayer(uint256 _index) external view returns (address) {
+        return s_players[_index];
+    }
+
+    /**
+     * @notice Returns the last timestamp the raffle was closed
+     * @return The last timestamp
+     */
     function getLastTimeStamp() external view returns (uint256) {
         return s_lastTimeStamp;
     }

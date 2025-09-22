@@ -17,6 +17,8 @@ contract CreateSubscription is Script {
     }
 
     function createSubscriptionUsingConfig() public returns (uint256, address){
+        
+        // all the relevant data is obtained from HelperConfig.s.sol
         HelperConfig helperConfig = new HelperConfig();
         address vrfCoordinator = helperConfig.getConfig().vrfCoordinator;
         //owner of contract and subscriptionID in Chainlink VRF coordinator
@@ -35,6 +37,10 @@ contract CreateSubscription is Script {
     }
 }
 
+/**
+ * @title FundSubscription to VRF on proper Network
+ * @notice This script will fund programatically the subscription with LINK.
+ */
 contract FundSubscription is Script, CodeConstants {
     
     uint256 public constant FUND_AMOUNT = 1e18;  // in this case 1 LINK
@@ -70,7 +76,10 @@ contract FundSubscription is Script, CodeConstants {
         fundSubscriptionUsingConfig();
     }   
 }
-
+/**
+ * @title AddConsumer to VRF on proper Network
+ * @notice This script will add via coding a consumer to the VRF subscription.
+ */
 contract AddConsumer is Script {
     function addConsumerUsingConfig(address mostRecentlyDeployed) public {
         HelperConfig helperConfig = new HelperConfig();
