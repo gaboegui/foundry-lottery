@@ -30,7 +30,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     uint256 private immutable i_intervalDuration; //duration of Lottery interval in seconds
     address private immutable i_owner;
     bytes32 private immutable i_keyHashGasAdd; //chainlink depending on the speed and cost
-    uint256 private immutable i_subscriptionId;
+    uint256 private immutable i_subscriptionId; //chainlink VRF subscription ID
     uint32 private immutable i_callbackGasLimit;
 
     uint256 private s_lastTimeStamp;
@@ -45,9 +45,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
     /**
      * @param _entranceFee The amount of ETH to enter the raffle
      * @param _intervalDuration The duration of the lottery in seconds
-     * @param _vrfCoordinator The address of the VRF Coordinator
+     * @param _vrfCoordinator The address of the chainlink VRF Coordinator for a given network 
      * @param _keyHashGasAddress The gas lane to use for the VRF request
-     * @param _subscriptionId The subscription ID for the VRF request
+     * @param _subscriptionId The subscription ID for the chainlink VRF request
      * @param _callbackGasLimit The gas limit for the VRF callback
      */
     constructor( uint256 _entranceFee, uint256 _intervalDuration,
