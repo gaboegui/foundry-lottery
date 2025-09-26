@@ -13,7 +13,20 @@ Foundry consists of:
 
 https://book.getfoundry.sh/
 
-## Usage
+## PROJECT DESCRIPTION
+This project is a decentralized lottery system implemented using Solidity smart contracts and developed with the Foundry toolkit. It features a `Raffle.sol` smart contract that allows users to enter a lottery by paying a fee, with a winner being randomly selected and awarded the prize.
+
+## Raffle.sol Smart Contract
+
+The `Raffle.sol` smart contract provides the core logic for the lottery. Key features include:
+
+- **Enter Raffle**: Participants can enter the raffle by sending a specified amount of Ether.
+- **Random Winner Selection**: A Chainlink VRF (Verifiable Random Function) is used to securely and verifiably select a random winner from the participants.
+- **Automated Fulfillment**: Chainlink Keepers are integrated to automate the process of checking for a winner and fulfilling the lottery.
+- **Prize Distribution**: The winner receives the entire pool of Ether collected from participants.
+- **State Management**: The contract manages various states of the raffle, such as `OPEN`, `CALCULATING_WINNER`, to ensure proper flow and prevent reentrancy issues.
+
+## Getting Started
 
 ### Build
 
