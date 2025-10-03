@@ -58,7 +58,7 @@ $ forge snapshot
 $ anvil
 ```
 
-### Deploy
+### Deploy & Verify on Sepolia
 
 ```shell
 $ forge script script/DeployRaffle.s.sol:DeployRaffle --rpc-url $SEPOLIA_RPC_URL --account sepoliaAccount2 --broadcast --verify --etherscan-api-key $ETHERSCAN_API_KEY -vvvv
